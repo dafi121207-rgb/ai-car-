@@ -2,7 +2,7 @@ import numpy as np
 import json
 
 class NeuralNetwork:
-    def __init__(self, input_size=5, hidden_size=6, output_size=1):
+    def __init__(self, input_size=7, hidden_size=6, output_size=1):
         self.w1 = np.random.uniform(-1.0, 1.0, (input_size, hidden_size))
         self.b1 = np.random.uniform(-1.0, 1.0, (1, hidden_size))
         self.w2 = np.random.uniform(-1.0, 1.0, (hidden_size, output_size))

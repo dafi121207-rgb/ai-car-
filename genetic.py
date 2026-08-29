@@ -12,7 +12,7 @@ def mutate_matrix(matrix, mutation_rate=0.1, mutation_scale=0.2):
     matrix[mask] += noise[mask]
 
 def crossover(parent_a_nn, parent_b_nn, mutation_rate=0.1):
-    child_nn = NeuralNetwork(input_size=5, hidden_size=6, output_size=1)
+    child_nn = NeuralNetwork(input_size=7, hidden_size=6, output_size=1)
 
     mask_w1 = np.random.rand(*parent_a_nn.w1.shape) < 0.5
     child_nn.w1 = np.where(mask_w1, parent_a_nn.w1, parent_b_nn.w1)

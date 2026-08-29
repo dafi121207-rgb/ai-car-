@@ -17,10 +17,10 @@ class Car:
         self.time_alive = 0
         self.total_fitness = 0
 
-        self.sensor_angles = [-60, -30, 0, 30, 60]
+        self.sensor_angles = [-75, -50, -25, 0, 25, 50, 75]
         self.max_sensor_dist = 150
         self.sensors = [self.max_sensor_dist] * len(self.sensor_angles)
-        self.brain = NeuralNetwork(input_size=5, hidden_size=6, output_size=1)
+        self.brain = NeuralNetwork(input_size=7, hidden_size=6, output_size=1)
 
         try:
             self.original_image = pygame.image.load("car.png").convert_alpha()
