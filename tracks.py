@@ -15,6 +15,7 @@ def load_track_image(filename, width=800, height=600):
 # Load gambar sirkuit
 track_img_1 = load_track_image("track1.png")
 track_img_2 = load_track_image("track2.png")
+track_img_3 = load_track_image("track3.png")
 
 # Fungsi Render Menggunakan Gambar
 def draw_png_track_1(surface, width=800, height=600):
@@ -29,8 +30,15 @@ def draw_png_track_2(surface, width=800, height=600):
     else:
         surface.fill(WALL_COLOR)
 
+def draw_png_track_3(surface, width=800, height=600):
+    if track_img_3:
+        surface.blit(track_img_3, (0, 0))
+    else:
+        surface.fill(WALL_COLOR)
+
 # Daftar Track dengan koordinat START khusus per sirkuit
 TRACKS = [
     {"name": "PNG Track 1", "draw_func": draw_png_track_1, "start": (47, 497), "angle": 270, "wall_type": "red_black"},
-    {"name": "PNG Track 2", "draw_func": draw_png_track_2, "start": (100, 500), "angle": -90, "wall_color": "black"}
+    {"name": "PNG Track 2", "draw_func": draw_png_track_2, "start": (100, 500), "angle": -90, "wall_type": "black"},
+    {"name": "PNG Track 3", "draw_func": draw_png_track_3, "start": (64, 67), "angle": 0, "wall_type": "gold"}
 ]

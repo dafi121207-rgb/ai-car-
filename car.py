@@ -18,9 +18,9 @@ class Car:
         self.total_fitness = 0
 
         self.sensor_angles = [-75, -50, -25, 0, 25, 50, 75]
-        self.max_sensor_dist = 150
+        self.max_sensor_dist = 220  #pandangan AI
         self.sensors = [self.max_sensor_dist] * len(self.sensor_angles)
-        self.brain = NeuralNetwork(input_size=7, hidden_size=6, output_size=1)
+        self.brain = NeuralNetwork(input_size=7, hidden1=12, hidden2=12, output_size=1)
 
         try:
             self.original_image = pygame.image.load("car.png").convert_alpha()
@@ -39,13 +39,13 @@ class Car:
             return
 
         self.time_alive += 1
-        if self.time_alive > 1800:
+        if self.time_alive > 2000:
             self.alive = False
             return
         
         self.cast_sensors(track_surface, width, height, wall_type)
 
-        normalized_inputs = [dist / self.max_sensor_dist for dist in self.sensors]
+        normalized_inputs = [1.0 - (dist / self.max_sensor_dist) for dist in self.sensors]
         steer_decision = self.brain.forward(normalized_inputs)
 
         self.angle += steer_decision * self.rotation_speed
@@ -73,6 +73,8 @@ class Car:
                 elif wall_type == "white" and (r > 200 and g > 200 and b > 200):
                     break
                 elif wall_type == "black" and (r < 50 and g < 50 and b < 50):
+                    break
+                elif wall_type == "gold" and (r > 220 and g > 170 and b < 60):
                     break
              
 

@@ -12,24 +12,20 @@ def mutate_matrix(matrix, mutation_rate=0.1, mutation_scale=0.2):
     matrix[mask] += noise[mask]
 
 def crossover(parent_a_nn, parent_b_nn, mutation_rate=0.1):
-    child_nn = NeuralNetwork(input_size=7, hidden_size=6, output_size=1)
+    child_nn = NeuralNetwork(input_size=7, hidden1=12, hidden2=12, output_size=1)
 
-    mask_w1 = np.random.rand(*parent_a_nn.w1.shape) < 0.5
-    child_nn.w1 = np.where(mask_w1, parent_a_nn.w1, parent_b_nn.w1)
+    child_nn.w1 = np.where(np.random.rand(*parent_a_nn.w1.shape) > 0.5, parent_a_nn.w1, parent_b_nn.w1)
+    child_nn.b1 = np.where(np.random.rand(*parent_a_nn.b1.shape) > 0.5, parent_a_nn.b1, parent_b_nn.b1)
 
-    mask_b1 = np.random.rand(*parent_a_nn.b1.shape) < 0.5
-    child_nn.b1 = np.where(mask_b1, parent_a_nn.b1, parent_b_nn.b1)
+    child_nn.w2 = np.where(np.random.rand(*parent_a_nn.w2.shape) > 0.5, parent_a_nn.w2, parent_b_nn.w2)
+    child_nn.b2 = np.where(np.random.rand(*parent_a_nn.b2.shape) > 0.5, parent_a_nn.b2, parent_b_nn.b2)
 
-    mask_w2 = np.random.rand(*parent_a_nn.w2.shape) < 0.5
-    child_nn.w2 = np.where(mask_w2, parent_a_nn.w2, parent_b_nn.w2)
-
-    mask_b2 = np.random.rand(*parent_a_nn.b2.shape) < 0.5
-    child_nn.b2 = np.where(mask_b2, parent_a_nn.b2, parent_b_nn.b2)
-
-    mutate_matrix(child_nn.w1, mutation_rate)
-    mutate_matrix(child_nn.b1, mutation_rate)
-    mutate_matrix(child_nn.w2, mutation_rate)
-    mutate_matrix(child_nn.b2, mutation_rate)
+    child_nn.w3 = np.where(np.random.rand(*parent_a_nn.w3.shape) > 0.5, parent_a_nn.w3, parent_b_nn.w3)
+    child_nn.b3 = np.where(np.random.rand(*parent_a_nn.b3.shape) > 0.5, parent_a_nn.b3, parent_b_nn.b3)
+    
+    # Mutasi
+    for matrix in [child_nn.w1, child_nn.b1, child_nn.w2, child_nn.b2, child_nn.w3, child_nn.b3]:
+        mutate_matrix(matrix, mutation_rate=mutation_rate, mutation_scale=0.2)
 
     return child_nn
 

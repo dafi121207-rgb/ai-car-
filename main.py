@@ -3,11 +3,13 @@ import pygame
 from car import Car
 from tracks import TRACKS
 from genetic import next_generation
+from ui import draw_sidebar
 
 HEADLESS = False  # Set True jika ingin latihan tanpa window GUI
 POP_SIZE = 50
 MUTATION_RATE = 0.1
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1100, 600
+TRACK_WIDTH = 800
 
 if HEADLESS:
     os.environ["SDL_VIDEODRIVER"] = "dummy"
@@ -49,11 +51,16 @@ def main():
 
                 if event.key == pygame.K_s:
                     best_car = max(population, key=lambda c: c.time_alive)
-                    best_car.brain.save_to_file("best_brain.json")
+                    best_car.brain.save_to_file("best_brain.json", generation)
 
                 if event.key == pygame.K_l:
-                    for car in population:
-                        car.brain.load_from_file("best_brain.json")
+                    saved_gen = population[0].brain.load_from_file("best_brain.json")
+                    if saved_gen is not None:
+                        generation = saved_gen
+                        for car in population[1:]:
+                            car.brain.load_from_file("best_brain.json")
+                        for car in population:
+                            car.reset_for_track(active_track["start"], active_track["angle"])
 
                 if event.key == pygame.K_t:
                     current_track_idx = (current_track_idx + 1) % len(TRACKS)
@@ -65,30 +72,37 @@ def main():
             alive_count = 0
             for car in population:
                 if car.alive:
-                    car.think_and_drive(screen, WIDTH, HEIGHT, active_track.get("wall_type", "black"))
+                    car.think_and_drive(screen, TRACK_WIDTH, HEIGHT, active_track.get("wall_type", "black"))
                     alive_count += 1
             if alive_count == 0:
                 break
 
         if not HEADLESS:
+            show_sensors = (sim_speed == 1)
             for car in population:
-                car.draw(screen)
-
-        if alive_count == 0:
-            population = next_generation(population, POP_SIZE, MUTATION_RATE, active_track["start"], active_track["angle"])
-            generation += 1
-
-        if not HEADLESS:
+                car.draw(screen, draw_sensors=show_sensors)
+            draw_sidebar(screen, population, generation, active_track["name"], sim_speed, start_x=800, width=300, height=600)
             info_text = [
-                f"Generasi: {generation} | Track: {active_track['name']}",
-                f"Mobil Hidup: {alive_count}/{POP_SIZE} | Speed: {sim_speed}x",
-                "[1-4] Speed  [T] Ganti Track  [S] Save AI  [L] Load AI"
-            ]
+                            f"Generasi: {generation} | Track: {active_track['name']}",
+                            f"Mobil Hidup: {alive_count}/{POP_SIZE} | Speed: {sim_speed}x",
+                            "[1-4] Speed  [T] Ganti Track  [S] Save AI  [L] Load AI"
+                        ]
             for i, text in enumerate(info_text):
                 txt_surface = FONT.render(text, True, (255, 255, 255))
                 screen.blit(txt_surface, (15, 15 + i * 20))
 
             pygame.display.flip()
+
+        if alive_count == 0:
+            population = next_generation(population, POP_SIZE, MUTATION_RATE, active_track["start"], active_track["angle"])
+            generation += 1
+
+            if generation % 10 == 0:
+                current_track_idx = (current_track_idx + 1) % len(TRACKS)
+                active_track = TRACKS[current_track_idx]
+                for car in population:
+                    car.reset_for_track(active_track["start"], active_track["angle"])
+                print(f"[INFO] Auto-switch ke {active_track['name']} untuk generasi {generation}")
 
     pygame.quit()
 
